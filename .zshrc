@@ -33,7 +33,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
 # zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
 # zstyle ':omz:update' frequency 13
@@ -77,10 +77,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git brew colored-man-pages macos docker docker-compose docker-machine samtools bedtools conda-zsh-completion zsh-syntax-highlighting) 
 
 source $ZSH/oh-my-zsh.sh
+autoload -U compinit && compinit
 
+export ZSH_ASK_API_KEY="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"
+alias chatgpt="source $HOME/coding/zsh-ask/zsh-ask.zsh"
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -96,7 +99,21 @@ source $ZSH/oh-my-zsh.sh
 # fi
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+ export ARCHFLAGS="-arch arm64"
+
+#######################
+#!!!!!!!!!!!!!!!!!!!!!#
+#######################
+#
+#Aliases for Rosetta/ARM
+# Alias for ARM terminal
+alias arm="env /usr/bin/arch -arm64 /bin/zsh --login"
+# Alias for x86/Rosetta
+alias rosetta="env /usr/bin/arch -x86_64 /bin/zsh --login" 
+#
+#######################
+#!!!!!!!!!!!!!!!!!!!!!#
+#######################
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -104,81 +121,79 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
+alias zshconfig="vim ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-#
+alias rest="exec zsh"
 # alias to make pip work
-alias pip="pip3"
-# this alias is to make the conda rosetta script work in the active shell. without using source, 
-# it just runs in the subshell and then doesn't activate the x86 env. by running it as an alias, 
-# no puppies or kittens are killed.
-alias rosettaenv="source rosettaenv"
-
-# this alias is to hop into an arm64 conda env. make sure to deactivate the previous env or it prob
-# wont work
-alias arm64env="source arm64env"
-
+#alias pip="pip3"
+#
 # this alias is to make deactivating conda super ezpz
 alias deconda="conda deactivate"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/homebrew/Caskroom/miniforge/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/homebrew/Caskroom/miniforge/base/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 export PATH=$HOME/scripts/:$PATH
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-export PATH=/opt/homebrew/opt/openjdk/bin:/Users/michaelfoster/scripts/:/opt/homebrew/Caskroom/miniconda/base/condabin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/michaelfoster/bin:~/bin:/usr/local/include:/usr/local/lib
-mamba() {/opt/homebrew/Caskroom/miniforge/base/bin/mamba "$@" ;}
+export PATH=/opt/homebrew/opt/openjdk/bin:/Users/michaelfoster/scripts/:/opt/homebrew/Caskroom/miniconda/base/condabin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/michaelfoster/bin:~/bin:/usr/local/include:/usr/local/lib:/Users/michaelfoster/bin/bbtools
+#
+#
+#
+#
+#
 ##   __     __   __           ___
 ##  |__) | /  \ /__` \ / |\ |  |   /\  \_/
 ##  |__) | \__/ .__/  |  | \|  |  /~~\ / \
 ##  =======================================
 ##
-## Syntax Highlighting for computational biology bp.append
+## Syntax Highlighting for computational biology rc.append
 ## v0.1
 ##
-## Append this to your ~/.bashprofile in MacOS
+## Append this to your ~/.zshrc & ~/.bashrc
 ## to enable source-highlight for less and add
 ## bioSyntax pipe capability on your command line
 ##
-#export HIGHLIGHT="/usr/local/opt/source-highlight/share/source-highlight"
-export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"
+export HIGHLIGHT="$HOME/.local/share/source-highlight"
+export LESSOPEN="| $HIGHLIGHT/src-hilite-lesspipe-bio-MAC.sh %s"
 export LESS=" -R "
 
 alias less='less -NSi -# 10'
-# -N: add line numbers
-# -S: don't wrap lines (force to single line)
-# -# 10: Horizontal scroll distance
-
-alias more='less'
+#	-N: add line numbers
+#	-S: don't wrap lines (force to single line)
+#	-# 10: Horizontal scroll distance
 
 # Explicit call of  <file format>-less for piping data
 # i.e:  samtools view -h aligned_hits.bam | sam-less
 # Core syntaxes (default)
-alias clustal-less='source-highlight -f esc --lang-def=clustal.lang --outlang-def=bioSyntax.outlang     --style-file=fasta.style | less'
-alias bed-less='source-highlight     -f esc --lang-def=bed.lang     --outlang-def=bioSyntax.outlang     --style-file=sam.style   | less'
-alias fa-less='source-highlight      -f esc --lang-def=fasta.lang   --outlang-def=bioSyntax.outlang     --style-file=fasta.style | less'
-alias fq-less='source-highlight      -f esc --lang-def=fastq.lang   --outlang-def=bioSyntax.outlang     --style-file=fasta.style | less'
-alias gtf-less='source-highlight     -f esc --lang-def=gtf.lang     --outlang-def=bioSyntax-vcf.outlang --style-file=vcf.style   | less'
-alias pdb-less='source-highlight     -f esc --lang-def=pdb.lang     --outlang-def=bioSyntax-vcf.outlang --style-file=pdb.style   | less'
-alias sam-less='source-highlight     -f esc --lang-def=sam.lang     --outlang-def=bioSyntax.outlang     --style-file=sam.style   | less'
-alias vcf-less='source-highlight     -f esc --lang-def=vcf.lang     --outlang-def=bioSyntax-vcf.outlang --style-file=vcf.style   | less'
+alias clustal-less='source-highlight -f esc --lang-def=$HIGHLIGHT/clustal.lang --outlang-def=$HIGHLIGHT/bioSyntax.outlang     --style-file=$HIGHLIGHT/fasta.style | less'
+alias bed-less='source-highlight     -f esc --lang-def=$HIGHLIGHT/bed.lang     --outlang-def=$HIGHLIGHT/bioSyntax.outlang     --style-file=$HIGHLIGHT/sam.style   | less'
+alias fa-less='source-highlight      -f esc --lang-def=$HIGHLIGHT/fasta.lang   --outlang-def=$HIGHLIGHT/bioSyntax.outlang     --style-file=$HIGHLIGHT/fasta.style | less'
+alias fq-less='source-highlight      -f esc --lang-def=$HIGHLIGHT/fastq.lang   --outlang-def=$HIGHLIGHT/bioSyntax.outlang     --style-file=$HIGHLIGHT/fasta.style | less'
+alias gtf-less='source-highlight     -f esc --lang-def=$HIGHLIGHT/gtf.lang     --outlang-def=$HIGHLIGHT/bioSyntax-vcf.outlang --style-file=$HIGHLIGHT/vcf.style   | less'
+alias pdb-less='source-highlight     -f esc --lang-def=$HIGHLIGHT/pdb.lang     --outlang-def=$HIGHLIGHT/bioSyntax-vcf.outlang --style-file=$HIGHLIGHT/pdb.style   | less'
+alias sam-less='source-highlight     -f esc --lang-def=$HIGHLIGHT/sam.lang     --outlang-def=$HIGHLIGHT/bioSyntax.outlang     --style-file=$HIGHLIGHT/sam.style   | less'
+alias vcf-less='source-highlight     -f esc --lang-def=$HIGHLIGHT/vcf.lang     --outlang-def=$HIGHLIGHT/bioSyntax-vcf.outlang --style-file=$HIGHLIGHT/vcf.style   | less'
 alias bam-less='sam-less'
 
 # Auxillary syntaxes (uncomment to activate)
-alias fai-less='source-highlight      -f esc --lang-def=faidx.lang    --outlang-def=bioSyntax.outlang   --style-file=sam.style   | less'
-alias flagstat-less='source-highlight -f esc --lang-def=flagstat.lang --outlang-def=bioSyntax.outlang   --style-file=sam.style   | less'
+alias fai-less='source-highlight      -f esc --lang-def=$HIGHLIGHT/faidx.lang    --outlang-def=$HIGHLIGHT/bioSyntax.outlang   --style-file=$HIGHLIGHT/sam.style   | less'
+alias flagstat-less='source-highlight -f esc --lang-def=$HIGHLIGHT/flagstat.lang --outlang-def=$HIGHLIGHT/bioSyntax.outlang   --style-file=$HIGHLIGHT/sam.style   | less'
+
+export PATH=$PATH:/Users/michaelfoster/bin/bin
+
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/michaelfoster/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/michaelfoster/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/Users/michaelfoster/miniforge3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/michaelfoster/miniforge3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
