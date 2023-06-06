@@ -82,8 +82,6 @@ plugins=(git brew colored-man-pages macos docker docker-compose docker-machine s
 source $ZSH/oh-my-zsh.sh
 autoload -U compinit && compinit
 
-export ZSH_ASK_API_KEY="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"
-alias chatgpt="source $HOME/coding/zsh-ask/zsh-ask.zsh"
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
